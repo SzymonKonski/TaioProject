@@ -10,7 +10,7 @@ public static class Algorithm
         else if (diff < 0)
             first.AddRange(Enumerable.Repeat(new HashSet<int>(), -diff));
 
-        var tpl = Helper.GenerateMatches(first.Count, first.Count);
+        var tpl = Helper.GenerateMatches(first.Count);
 
         var distance = int.MaxValue;
 
@@ -41,61 +41,22 @@ public static class Algorithm
         var tmpS1 = new HashSet<int>(s1);
         s1.IntersectWith(s2);
         tmpS1.UnionWith(s2);
-        var t = tmpS1.Count - s1.Count;
-
-        return t;
+        return tmpS1.Count - s1.Count;
     }
 }
 
 public static class Helper
 {
-    /**
-     * @brief generateArray
-     * @param size
-     * @return A vector [0, 1, ..., size - 1]
-     */
-    private static List<int> GenerateArray(int size)
+    public static List<List<(int, int)>> GenerateMatches(int n)
     {
-        var arr = new List<int>();
-        for (var i = 0; i < size; ++i) arr.Add(i);
-        return arr;
-    }
-
-    /**
-     * @brief generateMatches
-     * @param n, cardinality of the vector X, where X = [0,1, ..., n - 1].
-     * @param m, cardinality of the vector Y, where Y = [0,1, ..., m - 1].
-     * @return All possible injective and non-surjective mappings 
-     * from the smaller vector to the larger vector.
-     */
-    public static List<List<(int, int)>> GenerateMatches(int n, int m)
-    {
-        // Deal with n > m. Swap back when generating pairs.
-        var swapped = false;
-        if (n > m)
-        {
-            swapped = true;
-            (m, n) = (n, m);
-        }
-
-        // Now n is smaller or equal to m
-        var A = GenerateArray(n);
-        var B = GenerateArray(m);
+        var A = Enumerable.Range(0, n).ToList();
+        var B = Enumerable.Range(0, n).ToList();
         var matches = new List<List<(int, int)>>();
         // Generate all the permutations of m
         do
         {
             var match = new List<(int, int)>();
-            for (var i = 0; i < n; ++i)
-            {
-                (int, int) p;
-                if (swapped)
-                    // Swap back to the original order.
-                    p = (A[i], B[i]);
-                else
-                    p = (B[i], A[i]);
-                match.Add(p);
-            }
+            for (var i = 0; i < n; ++i) match.Add((B[i], A[i]));
 
             matches.Add(match);
             // Generate next permutation.
@@ -112,7 +73,6 @@ public static class Solution
     // is reversely sorted.
     // The last step is to make the remaining higher position part as small as 
     // possible, we just have to reversely sort the num[i,n-1]
-
 
     public static bool NextPermutation(List<int> nums)
     {
@@ -148,13 +108,9 @@ public static class Solution
         return true;
     }
 
-    // swap function
     private static void Swap(List<int> num, int i, int j)
     {
-        var temp = 0;
-        temp = num[i];
-        num[i] = num[j];
-        num[j] = temp;
+        (num[i], num[j]) = (num[j], num[i]);
     }
 
     // using swap function to reverse
