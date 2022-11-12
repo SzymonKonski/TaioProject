@@ -1,47 +1,52 @@
-﻿namespace TaioProject;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
-public static class ApproximationAlgorithm
+namespace TaioProject
 {
-    public static int Calculate(List<HashSet<int>> firstFamily, List<HashSet<int>> secondFamily)
+    public static class ApproximationAlgorithm
     {
-        var first = firstFamily.Select(x => new HashSet<int>(x)).ToList();
-        var second = secondFamily.Select(x => new HashSet<int>(x)).ToList();
-
-        var diff = first.Count - second.Count;
-        if (diff > 0)
-            second.AddRange(Enumerable.Repeat(new HashSet<int>(), diff));
-        else if (diff < 0)
-            first.AddRange(Enumerable.Repeat(new HashSet<int>(), -diff));
-
-        first = first.OrderBy(x => x.Count).ToList();
-        second = second.OrderBy(x => x.Count).ToList();
-
-        var set = new HashSet<int>();
-        var sum = Math.Abs(diff);
-        var tmp = 0;
-
-        for (var i = 0; i < first.Count; i++)
+        public static int Calculate(List<HashSet<int>> firstFamily, List<HashSet<int>> secondFamily)
         {
-            var minDist = int.MaxValue;
+            var first = firstFamily.Select(x => new HashSet<int>(x)).ToList();
+            var second = secondFamily.Select(x => new HashSet<int>(x)).ToList();
 
-            for (var j = 0; j < second.Count; j++)
+            var diff = first.Count - second.Count;
+            if (diff > 0)
+                second.AddRange(Enumerable.Repeat(new HashSet<int>(), diff));
+            else if (diff < 0)
+                first.AddRange(Enumerable.Repeat(new HashSet<int>(), -diff));
+
+            first = first.OrderBy(x => x.Count).ToList();
+            second = second.OrderBy(x => x.Count).ToList();
+
+            var set = new HashSet<int>();
+            var sum = Math.Abs(diff);
+            var tmp = 0;
+
+            for (var i = 0; i < first.Count; i++)
             {
-                if (set.Contains(j))
-                    continue;
+                var minDist = int.MaxValue;
 
-                var dist = Algorithm.Distance(first[i], second[j]);
-
-                if (dist < minDist)
+                for (var j = 0; j < second.Count; j++)
                 {
-                    minDist = dist;
-                    tmp = j;
+                    if (set.Contains(j))
+                        continue;
+
+                    var dist = Algorithm.Distance(first[i], second[j]);
+
+                    if (dist < minDist)
+                    {
+                        minDist = dist;
+                        tmp = j;
+                    }
                 }
+
+                set.Add(tmp);
+                sum += minDist;
             }
 
-            set.Add(tmp);
-            sum += minDist;
+            return sum;
         }
-
-        return sum;
     }
 }
