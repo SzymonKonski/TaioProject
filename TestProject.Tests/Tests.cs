@@ -1,4 +1,5 @@
-﻿using TaioProject;
+﻿using System;
+using TaioProject;
 using Xunit;
 
 namespace TestProject.Tests
