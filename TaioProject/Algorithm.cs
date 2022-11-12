@@ -2,8 +2,11 @@
 
 public static class Algorithm
 {
-    public static int Calculate(List<HashSet<int>> first, List<HashSet<int>> second)
+    public static int Calculate(List<HashSet<int>> firstFamily, List<HashSet<int>> secondFamily)
     {
+        var first = firstFamily.Select(x => new HashSet<int>(x)).ToList();
+        var second = secondFamily.Select(x => new HashSet<int>(x)).ToList();
+
         var diff = first.Count - second.Count;
         if (diff > 0)
             second.AddRange(Enumerable.Repeat(new HashSet<int>(), diff));
@@ -39,30 +42,10 @@ public static class Algorithm
     public static int Distance(HashSet<int> s1, HashSet<int> s2)
     {
         var tmpS1 = new HashSet<int>(s1);
-        s1.IntersectWith(s2);
+        var tmpS12 = new HashSet<int>(s1);
+        tmpS12.IntersectWith(s2);
         tmpS1.UnionWith(s2);
-        return tmpS1.Count - s1.Count;
-    }
-}
-
-public static class Helper
-{
-    public static List<List<(int, int)>> GenerateMatches(int n)
-    {
-        var A = Enumerable.Range(0, n).ToList();
-        var B = Enumerable.Range(0, n).ToList();
-        var matches = new List<List<(int, int)>>();
-        // Generate all the permutations of m
-        do
-        {
-            var match = new List<(int, int)>();
-            for (var i = 0; i < n; ++i) match.Add((B[i], A[i]));
-
-            matches.Add(match);
-            // Generate next permutation.
-        } while (Solution.NextPermutation(B));
-
-        return matches;
+        return tmpS1.Count - tmpS12.Count;
     }
 }
 

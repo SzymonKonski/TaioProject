@@ -9,43 +9,31 @@ public class Tests
     {
         for (var i = 0; i < 100; i++)
         {
-            var family1 = GenerateFamilySet(3 * i);
-            var family2 = GenerateFamilySet(3 * i + 1);
-            var family3 = GenerateFamilySet(6 * i + 2);
-
-            //var clone1 = GenerateFamilySet(3 * i);
-            //var clone2 = GenerateFamilySet(3 * i + 1);
-            //var clone3 = GenerateFamilySet(6 * i + 2);
+            var family1 = Helper.GenerateFamilySet(3 * i);
+            var family2 = Helper.GenerateFamilySet(3 * i + 1);
+            var family3 = Helper.GenerateFamilySet(6 * i + 2);
 
             var dist1 = Algorithm.Calculate(family1, family2);
             var dist2 = Algorithm.Calculate(family2, family3);
             var dist3 = Algorithm.Calculate(family1, family3);
 
-            //if (dist1 + dist2 < dist3)
-            //{
-            //    var t = 12;
-            //}
-
             Assert.True(dist1 + dist2 >= dist3);
         }
     }
 
-    private List<HashSet<int>> GenerateFamilySet(int seed)
+    [Fact]
+    public void IsGoodApproximation()
     {
-        var familySet = new List<HashSet<int>>();
-        var lowerBound = 2;
-        var upperBound = 10;
-        var random = new Random(seed);
-        var numberOfSets1 = random.Next(lowerBound, upperBound);
-
-        for (var i = 0; i < numberOfSets1; i++)
+        for (var i = 0; i < 100; i++)
         {
-            var numberOfElements = random.Next(0, 20);
-            familySet.Add(new HashSet<int>(numberOfElements));
+            var family1 = Helper.GenerateFamilySet(3 * i);
+            var family2 = Helper.GenerateFamilySet(3 * i + 1);
 
-            for (var j = 0; j < numberOfElements; j++) familySet[i].Add(random.Next(0, 1000));
+            var dist = Algorithm.Calculate(family1, family2);
+            var distApproximation = ApproximationAlgorithm.Calculate(family1, family2);
+            var relative = dist != 0 ? Math.Abs(distApproximation - dist) / (float) dist * 100 : 0;
+
+            Assert.True(relative < 10);
         }
-
-        return familySet;
     }
 }
